@@ -126,12 +126,13 @@ git clone https://github.com/Supercoder2005/NEXUS-BI-GFG.git
 
 ## Backend setup
 cd backend
+python -m venv venv
+.\venv\Scripts\activate
 pip install -r requirements.txt 
 
 ## Run FastAPI server
 uvicorn main:app --reload
 
 ## Frontend setup
-cd frontend
 npm install
 npm run dev
