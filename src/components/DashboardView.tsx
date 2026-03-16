@@ -393,7 +393,7 @@ export function DashboardView({ query, tableName }: DashboardViewProps) {
                 </div>
               </div>
 
-              <div className="bg-white/[0.02] border border-white/10 rounded-2xl p-6 shadow-xl relative overflow-hidden flex flex-col">
+              {/* <div className="bg-white/[0.02] border border-white/10 rounded-2xl p-6 shadow-xl relative overflow-hidden flex flex-col">
                 <div className="absolute top-0 right-0 w-24 h-24 bg-indigo-500/5 blur-2xl rounded-full"></div>
                 <h4 className="text-sm font-bold mb-4 flex items-center gap-2 text-white">
                   <span className="w-2 h-2 rounded-full bg-indigo-400"></span>
@@ -405,7 +405,7 @@ export function DashboardView({ query, tableName }: DashboardViewProps) {
                     {isQuerying ? "..." : (allCharts[selectedChartIndex]?.rationale || "Selecting the optimal visualization for your query.")}
                   </p>
                 </div>
-              </div>
+              </div> */}
 
               <div className="bg-white/[0.02] border border-white/10 rounded-2xl p-6 shadow-xl relative overflow-hidden">
                 <div className="absolute top-0 right-0 w-24 h-24 bg-blue-500/5 blur-2xl rounded-full"></div>
@@ -421,6 +421,21 @@ export function DashboardView({ query, tableName }: DashboardViewProps) {
                 </div>
               </div>
             </div>
+
+            <div className="bg-white/[0.02] border border-white/10 rounded-2xl p-6 shadow-xl relative overflow-hidden flex flex-col">
+                <div className="absolute top-0 right-0 w-24 h-24 bg-indigo-500/5 blur-2xl rounded-full"></div>
+                <h4 className="text-sm font-bold mb-4 flex items-center gap-2 text-white">
+                  <span className="w-2 h-2 rounded-full bg-indigo-400"></span>
+                  AI Rationale
+                </h4>
+                <div className="flex gap-2.5 items-start">
+                  {allCharts[selectedChartIndex]?.rationale && <Sparkles className="w-4 h-4 text-indigo-400 shrink-0 mt-0.5" />}
+                  <p className="text-xs sm:text-sm text-white/70 leading-relaxed italic">
+                    {isQuerying ? "..." : (allCharts[selectedChartIndex]?.rationale || "Selecting the optimal visualization for your query.")}
+                  </p>
+                </div>
+              </div>
+              
           </section>
 
           {/* Data Table */}
