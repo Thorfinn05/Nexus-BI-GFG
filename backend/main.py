@@ -50,7 +50,7 @@ except Exception as e:
 
 # Configure Gemini AI
 genai.configure(api_key=GEMINI_API_KEY)
-model = genai.GenerativeModel('gemini-2.5-flash')
+model = genai.GenerativeModel('gemini-3.1-flash-lite-preview')
 
 # --- Models ---
 class Message(BaseModel):
