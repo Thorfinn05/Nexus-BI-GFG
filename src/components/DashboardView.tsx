@@ -4,6 +4,7 @@ import { ChartComponent } from './ChartComponent';
 import { cn } from '../utils';
 import { VoiceInput } from './VoiceInput';
 import { PerspectiveSelector } from './PerspectiveSelector';
+import { API_BASE_URL } from '../apiConfig';
 
 interface Message {
   role: 'user' | 'assistant';
@@ -101,7 +102,7 @@ export function DashboardView({ query, tableName }: DashboardViewProps) {
 
     try {
       // Fetch data
-      const queryResponse = await fetch('/api/query', {
+      const queryResponse = await fetch(`${API_BASE_URL}/api/query`, {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({ query: userQuery, table_name: tableName, history: currentHistory })
@@ -137,7 +138,7 @@ export function DashboardView({ query, tableName }: DashboardViewProps) {
         setInsights(finalInsights);
       } else {
         // Fetch fresh insights
-        const insightsResponse = await fetch('/api/insights', {
+        const insightsResponse = await fetch(`${API_BASE_URL}/api/insights`, {
           method: 'POST',
           headers: { 'Content-Type': 'application/json' },
           body: JSON.stringify({ data: queryData.data, context_query: userQuery })
@@ -177,7 +178,7 @@ export function DashboardView({ query, tableName }: DashboardViewProps) {
 
       // AUTO-SAVE to DB if not from cache
       if (!queryData.cached) {
-        fetch('/api/analyses', {
+        fetch(`${API_BASE_URL}/api/analyses`, {
           method: 'POST',
           headers: { 'Content-Type': 'application/json' },
           body: JSON.stringify({

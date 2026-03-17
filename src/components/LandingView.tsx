@@ -4,6 +4,7 @@ import TypewriterEffect from './TypewriterEffect';
 import { cn } from '../utils';
 import { VoiceInput } from './VoiceInput';
 import { DataPreview } from './DataPreview';
+import { API_BASE_URL } from '../apiConfig';
 
 interface LandingViewProps {
   onAnalyze: (query: string, tableName?: string) => void;
@@ -33,7 +34,7 @@ export function LandingView({ onAnalyze, activeTable, setActiveTable }: LandingV
     const fetchPreview = async () => {
       try {
         console.log('Fetching preview for:', activeTable);
-        const response = await fetch(`/api/preview/${activeTable}`);
+        const response = await fetch(`${API_BASE_URL}/api/preview/${activeTable}`);
         const data = await response.json();
         if (response.ok) {
           setPreviewData({
@@ -85,7 +86,7 @@ export function LandingView({ onAnalyze, activeTable, setActiveTable }: LandingV
     formData.append('table_name', newTableName);
     
     try {
-      const response = await fetch('/api/upload', {
+      const response = await fetch(`${API_BASE_URL}/api/upload`, {
         method: 'POST',
         body: formData,
       });

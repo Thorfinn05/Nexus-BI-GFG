@@ -3,6 +3,7 @@ import { ArrowLeft, Database, Calendar, Terminal, Download, Share2, TrendingUp, 
 import { ChartComponent } from './ChartComponent';
 import { cn } from '../utils';
 import { PerspectiveSelector } from './PerspectiveSelector';
+import { API_BASE_URL } from '../apiConfig';
 import jsPDF from 'jspdf';
 import { toPng } from 'html-to-image';
 
@@ -145,7 +146,7 @@ export function AnalysisDetailView({ analysisId, onBack }: AnalysisDetailViewPro
     const fetchDetail = async () => {
       setIsLoading(true);
       try {
-        const response = await fetch(`/api/analyses/${analysisId}`);
+        const response = await fetch(`${API_BASE_URL}/api/analyses/${analysisId}`);
         const data = await response.json();
         setAnalysis(data);
       } catch (error) {

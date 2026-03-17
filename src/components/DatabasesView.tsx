@@ -1,6 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import { Database, TrendingUp, Search, RefreshCw, AlertCircle, ArrowRight } from 'lucide-react';
 import { cn } from '../utils';
+import { API_BASE_URL } from '../apiConfig';
 
 interface DatabasesViewProps {
   setActiveTable: (tableName: string) => void;
@@ -17,7 +18,7 @@ export function DatabasesView({ setActiveTable, setActiveView }: DatabasesViewPr
     setIsLoading(true);
     setError(null);
     try {
-      const response = await fetch('/api/databases');
+      const response = await fetch(`${API_BASE_URL}/api/databases`);
       const data = await response.json();
       if (!response.ok) throw new Error(data.detail || 'Failed to fetch databases');
       setDatabases(data.databases || []);
