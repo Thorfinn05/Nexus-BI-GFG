@@ -4,6 +4,7 @@ import { ChartComponent } from './ChartComponent';
 import { cn } from '../utils';
 import { VoiceInput } from './VoiceInput';
 import { PerspectiveSelector } from './PerspectiveSelector';
+import { API_BASE_URL } from '../apiConfig';
 
 interface Message {
   role: 'user' | 'assistant';
@@ -101,7 +102,7 @@ export function DashboardView({ query, tableName }: DashboardViewProps) {
 
     try {
       // Fetch data
-      const queryResponse = await fetch('/api/query', {
+      const queryResponse = await fetch(`${API_BASE_URL}/api/query`, {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({ query: userQuery, table_name: tableName, history: currentHistory })
@@ -137,7 +138,7 @@ export function DashboardView({ query, tableName }: DashboardViewProps) {
         setInsights(finalInsights);
       } else {
         // Fetch fresh insights
-        const insightsResponse = await fetch('/api/insights', {
+        const insightsResponse = await fetch(`${API_BASE_URL}/api/insights`, {
           method: 'POST',
           headers: { 'Content-Type': 'application/json' },
           body: JSON.stringify({ data: queryData.data, context_query: userQuery })
@@ -177,7 +178,7 @@ export function DashboardView({ query, tableName }: DashboardViewProps) {
 
       // AUTO-SAVE to DB if not from cache
       if (!queryData.cached) {
-        fetch('/api/analyses', {
+        fetch(`${API_BASE_URL}/api/analyses`, {
           method: 'POST',
           headers: { 'Content-Type': 'application/json' },
           body: JSON.stringify({
@@ -244,9 +245,17 @@ export function DashboardView({ query, tableName }: DashboardViewProps) {
   }
 
   return (
-    <div className="flex-1 flex flex-col lg:flex-row overflow-hidden h-full bg-[#0a0c10]">
+    <div className="flex-1 flex flex-col lg:flex-row overflow-hidden h-full bg-[#0a0c10] relative">
+      {/* Background Blobs */}
+      <div className="absolute inset-0 overflow-hidden pointer-events-none z-0">
+        <div className="bg-blob w-[50%] h-[50%] bg-indigo-600/60 top-[-15%] left-[-15%] slide-in-from-top-10 duration-1000" />
+        <div className="bg-blob w-[60%] h-[60%] bg-purple-600/60 bottom-[-15%] right-[-15%] [animation-delay:2s]" />
+        <div className="bg-blob w-[40%] h-[40%] bg-fuchsia-600/60 top-[15%] right-[5%] [animation-delay:4s]" />
+        <div className="bg-blob w-[45%] h-[45%] bg-indigo-500/60 bottom-[5%] left-[10%] [animation-delay:6s]" />
+      </div>
+
       {/* Left Pane: Analysis Results */}
-      <div className="flex-1 overflow-y-auto w-full lg:border-r border-white/5 custom-scrollbar order-2 lg:order-1">
+      <div className="flex-1 overflow-y-auto w-full lg:border-r border-white/5 custom-scrollbar order-2 lg:order-1 relative z-10">
         <header className="sticky top-0 z-30 bg-[#0a0c10]/80 backdrop-blur-xl border-b border-white/5 px-4 sm:px-8 py-3 sm:py-4 flex items-center justify-between">
           <div className="flex items-center gap-3 sm:gap-4">
             <h2 className="text-lg sm:text-xl font-bold text-white tracking-tight">Analysis Pane</h2>
@@ -326,116 +335,106 @@ export function DashboardView({ query, tableName }: DashboardViewProps) {
             </div>
 
             {/* AI Insights Row */}
-            <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-              <div className="bg-white/[0.02] border border-white/10 rounded-2xl p-6 shadow-xl relative overflow-hidden flex flex-col h-full">
-                <div className="absolute top-0 right-0 w-24 h-24 bg-amber-500/5 blur-2xl rounded-full"></div>
-                <h4 className="text-sm font-bold mb-6 flex items-center gap-2 text-white/90">
-                  <span className="w-2 h-2 rounded-full bg-amber-400 shadow-[0_0_8px_rgba(251,191,36,0.5)]"></span>
-                  Pros & Cons Analysis
-                </h4>
-                <div className="space-y-4 flex-1">
-                  {isQuerying ? (
-                    <div className="flex flex-col gap-3">
-                      {[1, 2, 3].map(i => (
-                        <div key={i} className="flex gap-3 animate-pulse">
-                          <div className="w-5 h-5 rounded-full bg-white/5 shrink-0" />
-                          <div className="h-4 bg-white/5 rounded w-full" />
-                        </div>
-                      ))}
-                    </div>
-                  ) : (
-                    (() => {
-                      const text = insights?.pros_cons || "";
-                      if (!text) return <p className="text-sm text-white/30 italic">Awaiting data analysis...</p>;
+              <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+                
+                {/* 1. PROS & CONS (Left side) */}
+                <div className="bg-white/[0.02] border border-white/10 rounded-2xl p-6 shadow-xl relative overflow-hidden flex flex-col h-full">
+                  <div className="absolute top-0 right-0 w-24 h-24 bg-amber-500/5 blur-2xl rounded-full"></div>
+                  <h4 className="text-sm font-bold mb-6 flex items-center gap-2 text-white/90">
+                    <span className="w-2 h-2 rounded-full bg-amber-400 shadow-[0_0_8px_rgba(251,191,36,0.5)]"></span>
+                    Pros & Cons
+                  </h4>
+                  <div className="space-y-4 flex-1">
+                    {isQuerying ? (
+                      <div className="flex flex-col gap-3">
+                        {[1, 2, 3].map(i => (
+                          <div key={i} className="flex gap-3 animate-pulse">
+                            <div className="w-5 h-5 rounded-full bg-white/5 shrink-0" />
+                            <div className="h-4 bg-white/5 rounded w-full" />
+                          </div>
+                        ))}
+                      </div>
+                    ) : (
+                      (() => {
+                        const text = insights?.pros_cons || "";
+                        if (!text) return <p className="text-sm text-white/30 italic">Awaiting data analysis...</p>;
 
-                      // Parsing logic: Split by headers, bullets, or newlines
-                      const points: { text: string; type: 'pro' | 'con' }[] = [];
+                        // Parsing logic: Split by headers, bullets, or newlines
+                        const points: { text: string; type: 'pro' | 'con' }[] = [];
 
-                      // Try to split into Pros and Cons sections
-                      const prosPart = text.split(/Cons?:/i)[0].replace(/Pros?:/i, '').trim();
-                      const consPart = text.includes('Cons:') || text.includes('cons:') ? text.split(/Cons?:/i)[1].trim() : '';
+                        // Try to split into Pros and Cons sections
+                        const prosPart = text.split(/Cons?:/i)[0].replace(/Pros?:/i, '').trim();
+                        const consPart = text.includes('Cons:') || text.includes('cons:') ? text.split(/Cons?:/i)[1].trim() : '';
 
-                      const extract = (chunk: string, type: 'pro' | 'con') => {
-                        const items = chunk.split(/\n|•|/g).map(s => s.trim()).filter(s => s.length > 10);
-                        if (items.length === 0 && chunk.length > 10) items.push(chunk);
-                        items.forEach(item => points.push({ text: item, type }));
-                      };
+                        const extract = (chunk: string, type: 'pro' | 'con') => {
+                          const items = chunk.split(/\n|•|/g).map(s => s.trim()).filter(s => s.length > 10);
+                          if (items.length === 0 && chunk.length > 10) items.push(chunk);
+                          items.forEach(item => points.push({ text: item, type }));
+                        };
 
-                      if (prosPart) extract(prosPart, 'pro');
-                      if (consPart) extract(consPart, 'con');
+                        if (prosPart) extract(prosPart, 'pro');
+                        if (consPart) extract(consPart, 'con');
 
-                      // Fallback if parsing failed to produce points but we have text
-                      if (points.length === 0 && text.length > 0) {
-                        const sentences = text.split(/[.!?]/).filter(s => s.trim().length > 15);
-                        sentences.slice(0, 4).forEach((s, idx) => {
-                          points.push({ text: s.trim() + '.', type: idx % 2 === 0 ? 'pro' : 'con' });
-                        });
-                      }
+                        // Fallback if parsing failed to produce points but we have text
+                        if (points.length === 0 && text.length > 0) {
+                          const sentences = text.split(/[.!?]/).filter(s => s.trim().length > 15);
+                          sentences.slice(0, 4).forEach((s, idx) => {
+                            points.push({ text: s.trim() + '.', type: idx % 2 === 0 ? 'pro' : 'con' });
+                          });
+                        }
 
-                      return points.map((point, idx) => (
-                        <div key={idx} className="flex gap-3 group">
-                          {point.type === 'pro' ? (
-                            <div className="w-5 h-5 rounded-full bg-emerald-500 flex items-center justify-center shrink-0 shadow-lg shadow-emerald-500/20">
-                              <CheckCircle2 className="w-3 h-3 text-white" strokeWidth={3} />
-                            </div>
-                          ) : (
-                            <div className="w-5 h-5 rounded-full bg-rose-500 flex items-center justify-center shrink-0 shadow-lg shadow-rose-500/20">
-                              <XCircle className="w-3 h-3 text-white" strokeWidth={3} />
-                            </div>
-                          )}
-                          <p className="text-sm text-white/80 leading-relaxed group-hover:text-white transition-colors">
-                            {point.text}
-                          </p>
-                        </div>
-                      ));
-                    })()
-                  )}
+                        return points.map((point, idx) => (
+                          <div key={idx} className="flex gap-3 group">
+                            {point.type === 'pro' ? (
+                              <div className="w-5 h-5 rounded-full bg-emerald-500 flex items-center justify-center shrink-0 shadow-lg shadow-emerald-500/20">
+                                <CheckCircle2 className="w-3 h-3 text-white" strokeWidth={3} />
+                              </div>
+                            ) : (
+                              <div className="w-5 h-5 rounded-full bg-rose-500 flex items-center justify-center shrink-0 shadow-lg shadow-rose-500/20">
+                                <XCircle className="w-3 h-3 text-white" strokeWidth={3} />
+                              </div>
+                            )}
+                            <p className="text-sm text-white/80 leading-relaxed group-hover:text-white transition-colors">
+                              {point.text}
+                            </p>
+                          </div>
+                        ));
+                      })()
+                    )}
+                  </div>
                 </div>
+
+                {/* 2. INSIGHTS & PREDICTIONS (Moved up to be on the Right side) */}
+                <div className="bg-white/[0.02] border border-white/10 rounded-2xl p-6 shadow-xl relative overflow-hidden h-full">
+                  <div className="absolute top-0 right-0 w-24 h-24 bg-blue-500/5 blur-2xl rounded-full"></div>
+                  <h4 className="text-sm font-bold mb-4 flex items-center gap-2 text-white">
+                    <span className="w-2 h-2 rounded-full bg-blue-400"></span>
+                    Insights & Predictions
+                  </h4>
+                  <div className="flex gap-2.5 items-start">
+                    {insights?.predictions && !isQuerying && <Activity className="w-4 h-4 text-yellow-400 shrink-0 mt-0.5" />}
+                    <p className="text-sm text-white/70 leading-relaxed whitespace-pre-wrap">
+                      {isQuerying ? "Generating..." : (insights?.predictions || "Awaiting trends...")}
+                    </p>
+                  </div>
+                </div>
+
+                {/* 3. AI RATIONALE (Moved down, added md:col-span-2 to take full width) */}
+                <div className="bg-white/[0.02] border border-white/10 rounded-2xl p-6 shadow-xl relative overflow-hidden flex flex-col md:col-span-2">
+                  <div className="absolute top-0 right-0 w-24 h-24 bg-indigo-500/5 blur-2xl rounded-full"></div>
+                  <h4 className="text-sm font-bold mb-4 flex items-center gap-2 text-white">
+                    <span className="w-2 h-2 rounded-full bg-indigo-400"></span>
+                    AI Rationale
+                  </h4>
+                  <div className="flex gap-2.5 items-start">
+                    {allCharts[selectedChartIndex]?.rationale && <Sparkles className="w-4 h-4 text-indigo-400 shrink-0 mt-0.5" />}
+                    <p className="text-xs sm:text-sm text-white/70 leading-relaxed italic">
+                      {isQuerying ? "..." : (allCharts[selectedChartIndex]?.rationale || "Selecting the optimal visualization for your query.")}
+                    </p>
+                  </div>
+                </div>
+
               </div>
-
-              {/* <div className="bg-white/[0.02] border border-white/10 rounded-2xl p-6 shadow-xl relative overflow-hidden flex flex-col">
-                <div className="absolute top-0 right-0 w-24 h-24 bg-indigo-500/5 blur-2xl rounded-full"></div>
-                <h4 className="text-sm font-bold mb-4 flex items-center gap-2 text-white">
-                  <span className="w-2 h-2 rounded-full bg-indigo-400"></span>
-                  AI Rationale
-                </h4>
-                <div className="flex gap-2.5 items-start">
-                  {allCharts[selectedChartIndex]?.rationale && <Sparkles className="w-4 h-4 text-indigo-400 shrink-0 mt-0.5" />}
-                  <p className="text-xs sm:text-sm text-white/70 leading-relaxed italic">
-                    {isQuerying ? "..." : (allCharts[selectedChartIndex]?.rationale || "Selecting the optimal visualization for your query.")}
-                  </p>
-                </div>
-              </div> */}
-
-              <div className="bg-white/[0.02] border border-white/10 rounded-2xl p-6 shadow-xl relative overflow-hidden">
-                <div className="absolute top-0 right-0 w-24 h-24 bg-blue-500/5 blur-2xl rounded-full"></div>
-                <h4 className="text-sm font-bold mb-4 flex items-center gap-2 text-white">
-                  <span className="w-2 h-2 rounded-full bg-blue-400"></span>
-                  Insights & Predictions
-                </h4>
-                <div className="flex gap-2.5 items-start">
-                  {insights?.predictions && !isQuerying && <Activity className="w-4 h-4 text-yellow-400 shrink-0 mt-0.5" />}
-                  <p className="text-sm text-white/70 leading-relaxed whitespace-pre-wrap">
-                    {isQuerying ? "Generating..." : (insights?.predictions || "Awaiting trends...")}
-                  </p>
-                </div>
-              </div>
-            </div>
-
-            <div className="bg-white/[0.02] border border-white/10 rounded-2xl p-6 shadow-xl relative overflow-hidden flex flex-col">
-                <div className="absolute top-0 right-0 w-24 h-24 bg-indigo-500/5 blur-2xl rounded-full"></div>
-                <h4 className="text-sm font-bold mb-4 flex items-center gap-2 text-white">
-                  <span className="w-2 h-2 rounded-full bg-indigo-400"></span>
-                  AI Rationale
-                </h4>
-                <div className="flex gap-2.5 items-start">
-                  {allCharts[selectedChartIndex]?.rationale && <Sparkles className="w-4 h-4 text-indigo-400 shrink-0 mt-0.5" />}
-                  <p className="text-xs sm:text-sm text-white/70 leading-relaxed italic">
-                    {isQuerying ? "..." : (allCharts[selectedChartIndex]?.rationale || "Selecting the optimal visualization for your query.")}
-                  </p>
-                </div>
-              </div>
-              
           </section>
 
           {/* Data Table */}
@@ -476,7 +475,7 @@ export function DashboardView({ query, tableName }: DashboardViewProps) {
       </div>
 
       {/* Right Pane: Chat Interface */}
-      <div className="w-full lg:w-[350px] xl:w-[400px] flex flex-col bg-white/[0.01] border-l border-white/5 h-[400px] lg:h-full order-1 lg:order-2">
+      <div className="w-full lg:w-[350px] xl:w-[400px] flex flex-col bg-white/[0.01] border-l border-white/5 h-[400px] lg:h-full order-1 lg:order-2 relative z-10">
         <div className="p-4 sm:p-6 border-b border-white/5">
           <div className="flex items-center gap-3">
             <div className="w-8 h-8 rounded-full bg-indigo-500/20 flex items-center justify-center text-indigo-400">

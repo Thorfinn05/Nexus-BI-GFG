@@ -344,6 +344,7 @@ async def process_query(req: QueryRequest):
            - Match your `TO_DATE` format to the sample data.
            - Use standard SQL syntax (no markdown block/formatting).
         2. "chart_type": A recommended chart type (choose one: 'bar', 'line', 'pie', 'table', 'scatter', 'area').
+           - Use 'scatter' when the user wants to see the relationship or correlation between two numeric variables.
         3. "confidence": A value from 'High', 'Medium', or 'Low'.
         4. "rationale": A brief explanation of why this chart and SQL choice is useful for the user's query.
         5. "summary": A very brief friendly 1-sentence summary of what this specific variation shows.

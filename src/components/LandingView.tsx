@@ -4,6 +4,7 @@ import TypewriterEffect from './TypewriterEffect';
 import { cn } from '../utils';
 import { VoiceInput } from './VoiceInput';
 import { DataPreview } from './DataPreview';
+import { API_BASE_URL } from '../apiConfig';
 
 interface LandingViewProps {
   onAnalyze: (query: string, tableName?: string) => void;
@@ -25,7 +26,7 @@ export function LandingView({ onAnalyze, activeTable, setActiveTable }: LandingV
 
   // Fetch preview data automatically when activeTable changes
   React.useEffect(() => {
-    if (!activeTable || activeTable === 'default_table') return;
+    if (!activeTable || activeTable === 'none') return;
     
     // Only fetch if it's a different table than what we already have
     if (previewData?.tableName === activeTable) return;
@@ -33,7 +34,7 @@ export function LandingView({ onAnalyze, activeTable, setActiveTable }: LandingV
     const fetchPreview = async () => {
       try {
         console.log('Fetching preview for:', activeTable);
-        const response = await fetch(`/api/preview/${activeTable}`);
+        const response = await fetch(`${API_BASE_URL}/api/preview/${activeTable}`);
         const data = await response.json();
         if (response.ok) {
           setPreviewData({
@@ -85,7 +86,7 @@ export function LandingView({ onAnalyze, activeTable, setActiveTable }: LandingV
     formData.append('table_name', newTableName);
     
     try {
-      const response = await fetch('/api/upload', {
+      const response = await fetch(`${API_BASE_URL}/api/upload`, {
         method: 'POST',
         body: formData,
       });
@@ -117,9 +118,9 @@ export function LandingView({ onAnalyze, activeTable, setActiveTable }: LandingV
         </div>
 
         {/* Breathing Background Blurs */}
-        <div className="absolute top-[-10%] left-[-10%] w-[50%] h-[50%] bg-indigo-600/10 blur-[120px] rounded-full animate-pulse-slow"></div>
-        <div className="absolute bottom-[10%] right-[-10%] w-[60%] h-[60%] bg-purple-600/10 blur-[150px] rounded-full animate-pulse-slow-reverse"></div>
-        <div className="absolute top-[20%] right-[10%] w-[40%] h-[40%] bg-pink-600/5 blur-[100px] rounded-full animate-pulse-slow" style={{ animationDelay: '-2s' }}></div>
+        <div className="absolute top-[-10%] left-[-10%] w-[50%] h-[50%] bg-indigo-600/20 blur-[120px] rounded-full animate-pulse-slow"></div>
+        <div className="absolute bottom-[10%] right-[-10%] w-[60%] h-[60%] bg-purple-600/20 blur-[150px] rounded-full animate-pulse-slow-reverse"></div>
+        <div className="absolute top-[20%] right-[10%] w-[40%] h-[40%] bg-pink-600/10 blur-[100px] rounded-full animate-pulse-slow" style={{ animationDelay: '-2s' }}></div>
       </div>
 
       <style>{`
@@ -211,7 +212,7 @@ export function LandingView({ onAnalyze, activeTable, setActiveTable }: LandingV
             <h3 className="text-white/40 text-[9px] sm:text-[10px] font-bold uppercase tracking-[0.2em] mb-2">Currently Connected</h3>
             <div className="bg-emerald-500/5 px-3 sm:px-4 py-2 sm:py-3 rounded-2xl border border-emerald-500/10 mb-2 max-w-full">
               <p className="text-white font-mono text-xs sm:text-sm break-all font-bold tracking-tight">
-                {activeTable || 'nexus_bi_default'}
+                {activeTable || 'none'}
               </p>
             </div>
             <p className="text-[9px] sm:text-[10px] text-emerald-400/60 font-medium uppercase tracking-widest">Active Table ready for analysis</p>

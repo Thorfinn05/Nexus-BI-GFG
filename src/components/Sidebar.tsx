@@ -78,12 +78,12 @@ export function Sidebar({ isCollapsed, setIsCollapsed, activeView, setActiveView
         
         <div className="flex items-center gap-3 px-3 py-4 mt-2">
           <div className="w-8 h-8 rounded-full bg-indigo-500/20 flex items-center justify-center shrink-0 border border-indigo-500/30">
-            <span className="text-indigo-300 text-xs font-bold">AR</span>
+            <span className="text-indigo-300 text-xs font-bold">G</span>
           </div>
           {!isCollapsed && (
             <div className="flex-1 min-w-0 overflow-hidden">
-              <p className="text-sm font-semibold truncate text-white">Aitijhya Roy</p>
-              <p className="text-[10px] text-white/50 font-medium truncate uppercase tracking-wider">Admin</p>
+              <p className="text-sm font-semibold truncate text-white">Guest</p>
+              <p className="text-[10px] text-white/50 font-medium truncate uppercase tracking-wider">User</p>
             </div>
           )}
         </div>

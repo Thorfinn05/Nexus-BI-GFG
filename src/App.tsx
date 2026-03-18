@@ -26,7 +26,7 @@ export default function App() {
     return localStorage.getItem('nexus_current_query') || '';
   });
   const [activeTable, setActiveTable] = useState<string>(() => {
-    return localStorage.getItem('nexus_active_table') || 'default_table';
+    return localStorage.getItem('nexus_active_table') || 'none_selected';
   });
 
   // Save to localStorage when state changes

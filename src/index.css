@@ -36,3 +36,23 @@
   font-size: 10px !important;
   font-weight: bold !important;
 }
+
+@keyframes breathe {
+  0%, 100% {
+    transform: scale(1);
+    opacity: 0.15;
+  }
+  50% {
+    transform: scale(1.1);
+    opacity: 0.25;
+  }
+}
+
+.bg-blob {
+  position: absolute;
+  border-radius: 50%;
+  filter: blur(120px);
+  pointer-events: none;
+  z-index: 0;
+  animation: breathe 8s ease-in-out infinite;
+}

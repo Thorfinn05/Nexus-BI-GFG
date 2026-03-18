@@ -1,6 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import { BarChart3, Database, Search, RefreshCw, ArrowRight, Calendar, Sparkles } from 'lucide-react';
 import { cn } from '../utils';
+import { API_BASE_URL } from '../apiConfig';
 
 interface AnalysisSummary {
   id: number;
@@ -21,7 +22,7 @@ export function AnalysesView({ onSelectAnalysis }: AnalysesViewProps) {
   const fetchAnalyses = async () => {
     setIsLoading(true);
     try {
-      const response = await fetch('/api/analyses');
+      const response = await fetch(`${API_BASE_URL}/api/analyses`);
       const data = await response.json();
       setAnalyses(data.analyses || []);
     } catch (error) {

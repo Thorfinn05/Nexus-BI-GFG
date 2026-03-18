@@ -1,7 +1,7 @@
 import React, { useMemo } from 'react';
 import {
   LineChart, Line, XAxis, YAxis, CartesianGrid, Tooltip, ResponsiveContainer,
-  PieChart, Pie, Cell, BarChart, Bar, Legend, Brush
+  PieChart, Pie, Cell, BarChart, Bar, Legend, Brush, ScatterChart, Scatter, ZAxis
 } from 'recharts';
 
 interface ChartProps {
@@ -128,6 +128,43 @@ export function ChartComponent({ type, data }: ChartProps) {
           />
           <Legend iconType="circle" wrapperStyle={{ fontSize: '12px', color: 'rgba(255,255,255,0.6)' }} />
         </PieChart>
+      </ResponsiveContainer>
+    );
+  }
+
+  if (type === 'scatter') {
+    return (
+      <ResponsiveContainer width="100%" height="100%">
+        <ScatterChart data={data} margin={{ top: 10, right: 10, left: -20, bottom: 20 }}>
+          <CartesianGrid strokeDasharray="3 3" stroke="rgba(255,255,255,0.05)" vertical={false} />
+          <XAxis 
+            type="number"
+            dataKey={valueKeys[0] || nameKey} 
+            stroke="rgba(255,255,255,0.2)" 
+            tick={{ fill: 'rgba(255,255,255,0.4)', fontSize: 10, fontWeight: 'bold' }} 
+            tickLine={false}
+            axisLine={false}
+            name={valueKeys[0] || nameKey}
+            label={{ value: valueKeys[0] || nameKey, position: 'insideBottom', offset: -5, fill: 'rgba(255,255,255,0.4)', fontSize: 10 }}
+          />
+          <YAxis 
+            type="number"
+            dataKey={valueKeys[1] || valueKeys[0]} 
+            stroke="rgba(255,255,255,0.2)" 
+            tick={{ fill: 'rgba(255,255,255,0.4)', fontSize: 10 }} 
+            tickLine={false}
+            axisLine={false}
+            name={valueKeys[1] || valueKeys[0]}
+            label={{ value: valueKeys[1] || valueKeys[0], angle: -90, position: 'insideLeft', fill: 'rgba(255,255,255,0.4)', fontSize: 10 }}
+          />
+          <ZAxis type="number" range={[64, 144]} />
+          <Tooltip 
+            cursor={{ strokeDasharray: '3 3' }}
+            contentStyle={{ backgroundColor: '#0f1117', borderColor: 'rgba(255,255,255,0.1)', borderRadius: '8px', color: '#fff' }}
+          />
+          <Legend iconType="circle" wrapperStyle={{ fontSize: '12px', color: 'rgba(255,255,255,0.6)', paddingTop: '10px' }} />
+          <Scatter name={`${valueKeys[0]} vs ${valueKeys[1] || valueKeys[0]}`} data={data} fill={COLORS[0]} />
+        </ScatterChart>
       </ResponsiveContainer>
     );
   }
